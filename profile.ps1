@@ -1,3 +1,4 @@
+# Get if this is an elevated session
 Function Test-Elevated {
   $wid = [System.Security.Principal.WindowsIdentity]::GetCurrent()
   $prp = New-Object System.Security.Principal.WindowsPrincipal($wid)
@@ -5,16 +6,25 @@ Function Test-Elevated {
   $prp.IsInRole($adm)
 }
 
+# Open a project in idea
 Function OIdea {
 	$exe = "C:\Program Files\JetBrains\IntelliJ IDEA 2018.3.4\bin\idea64.exe";
-	& $exe $args
+	$curFolder = Get-Location;
+	if (!$args[0]) {
+		& $exe $curFolder
+	} else {
+		& $exe $args[0]
+	}
 }
 
+# Open an elevated Powershell and close this window
 Function Elevate {
         & Start-Process powershell -verb runAs
 	exit
 }
 
+# Not my function, used for writing different colors in the same line
+# https://github.com/EvotecIT/PSWriteColor
 function Write-Color {
     <#
 	.SYNOPSIS
@@ -151,8 +161,9 @@ function Write-Color {
     }
 }
 
-# ALIAS
-Set-Alias -Name ll -Value ls -force
+function ll {
+    ls -force
+}
 
 # DISPLAY STUFF
 
@@ -174,6 +185,8 @@ If (Test-Elevated) {
 } Else {
 	Write-Color "Admin Mode ", "FALSE" -Color White, Red
 }
+
+D:
 
 echo "
 ";
